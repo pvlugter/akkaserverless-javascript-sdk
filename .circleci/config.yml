@@ -758,8 +758,8 @@ jobs:
             make -C docs deploy
 
   npm-js-tests:
-    docker:
-      - image: cimg/node:18.16.0
+    machine:
+      image: ubuntu-2204:2022.10.2
     description: "npm-js-tests"
     steps:
       - checkout-and-merge-to-main
@@ -771,24 +771,32 @@ jobs:
           command: sbt kalix-codegen-js-cli/nativeImage
       - run:
           name: "install codegen"
+          working_directory: "~/project/npm-js/create-kalix-entity"
           command: |
-            cd npm-js/create-kalix-entity
+            source /opt/circleci/.nvm/nvm.sh
+            nvm install
             npm ci && npm pack
       - run:
           name: "install kalix-scripts"
+          working_directory: "~/project/npm-js/kalix-scripts"
           command: |
-            cd npm-js/kalix-scripts
+            source /opt/circleci/.nvm/nvm.sh
+            nvm install
             export KALIX_NPMJS_CODEGEN_BINARY="${HOME}/project/codegen/js-gen-cli/target/native-image/kalix-codegen-js"
             npm ci && npm pack
       - run:
           name: "install sdk"
+          working_directory: "~/project/sdk"
           command: |
-            cd sdk
+            source /opt/circleci/.nvm/nvm.sh
+            nvm install
             npm ci && npm pack
       - run:
           name: "build testkit"
           working_directory: "~/project/testkit"
           command: |
+            source /opt/circleci/.nvm/nvm.sh
+            nvm install
             npm ci
             npm install ../sdk/kalix-io-kalix-javascript-sdk-0.0.0.tgz
             npm pack
@@ -796,6 +804,8 @@ jobs:
           name: "test generated JavaScript Value Entity"
           working_directory: "~/tmp"
           command: |
+            source /opt/circleci/.nvm/nvm.sh
+            pushd ~/project/sdk && nvm install && popd
             export KALIX_NPMJS_SCRIPTS_VERSION="file:${HOME}/project/npm-js/kalix-scripts/kalix-io-kalix-scripts-0.0.0.tgz"
             export KALIX_NPMJS_SDK_VERSION="file:${HOME}/project/sdk/kalix-io-kalix-javascript-sdk-0.0.0.tgz"
             export KALIX_NPMJS_TESTKIT_VERSION="file:${HOME}/project/testkit/kalix-io-testkit-0.0.0.tgz"
@@ -809,6 +819,8 @@ jobs:
           name: "test generated TypeScript Value Entity"
           working_directory: "~/tmp"
           command: |
+            source /opt/circleci/.nvm/nvm.sh
+            pushd ~/project/sdk && nvm install && popd
             export KALIX_NPMJS_SCRIPTS_VERSION="file:${HOME}/project/npm-js/kalix-scripts/kalix-io-kalix-scripts-0.0.0.tgz"
             export KALIX_NPMJS_SDK_VERSION="file:${HOME}/project/sdk/kalix-io-kalix-javascript-sdk-0.0.0.tgz"
             export KALIX_NPMJS_TESTKIT_VERSION="file:${HOME}/project/testkit/kalix-io-testkit-0.0.0.tgz"
@@ -822,6 +834,8 @@ jobs:
           name: "test generated JavaScript Event Sourced Entity"
           working_directory: "~/tmp"
           command: |
+            source /opt/circleci/.nvm/nvm.sh
+            pushd ~/project/sdk && nvm install && popd
             export KALIX_NPMJS_SCRIPTS_VERSION="file:${HOME}/project/npm-js/kalix-scripts/kalix-io-kalix-scripts-0.0.0.tgz"
             export KALIX_NPMJS_SDK_VERSION="file:${HOME}/project/sdk/kalix-io-kalix-javascript-sdk-0.0.0.tgz"
             export KALIX_NPMJS_TESTKIT_VERSION="file:${HOME}/project/testkit/kalix-io-testkit-0.0.0.tgz"
@@ -835,6 +849,8 @@ jobs:
           name: "test generated TypeScript Event Sourced Entity"
           working_directory: "~/tmp"
           command: |
+            source /opt/circleci/.nvm/nvm.sh
+            pushd ~/project/sdk && nvm install && popd
             export KALIX_NPMJS_SCRIPTS_VERSION="file:${HOME}/project/npm-js/kalix-scripts/kalix-io-kalix-scripts-0.0.0.tgz"
             export KALIX_NPMJS_SDK_VERSION="file:${HOME}/project/sdk/kalix-io-kalix-javascript-sdk-0.0.0.tgz"
             export KALIX_NPMJS_TESTKIT_VERSION="file:${HOME}/project/testkit/kalix-io-testkit-0.0.0.tgz"
